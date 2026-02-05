@@ -1,0 +1,98 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <strong>Danh Sách User</strong>
+</div>
+
+<% if (typeof successMessage !== 'undefined' && successMessage) { %>
+    <div class="alert alert-success"><%= successMessage %></div>
+<% } %>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="alert alert-danger"><%= errorMessage %></div>
+<% } %>
+
+<!-- Filter -->
+<div style="background-color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <form method="GET" action="/users" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; align-items: end;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>Lọc theo Vai Trò:</label>
+            <select name="role" onchange="this.form.submit();">
+                <option value="">-- Tất cả --</option>
+                <option value="User" <%= filter?.role === 'User' ? 'selected' : '' %>>User</option>
+                <option value="Owner" <%= filter?.role === 'Owner' ? 'selected' : '' %>>Owner</option>
+                <option value="Admin" <%= filter?.role === 'Admin' ? 'selected' : '' %>>Admin</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <input type="text" name="search" placeholder="Tìm theo tên hoặc email..." value="<%= searchQuery || '' %>" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">🔍 Tìm Kiếm</button>
+        </div>
+    </form>
+</div>
+
+<!-- Users Table -->
+<div class="table-container">
+    <% if (users && users.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Tên</th>
+                    <th>Email</th>
+                    <th>Điện Thoại</th>
+                    <th>Vai Trò</th>
+                    <th>Địa Chỉ</th>
+                    <th>Ngày Tạo</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td><strong><%= user.id %></strong></td>
+                        <td><%= user.name %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.phone %></td>
+                        <td>
+                            <% if (user.role === 'User') { %>
+                                <span class="badge badge-info">👤 <%= user.role %></span>
+                            <% } else if (user.role === 'Owner') { %>
+                                <span class="badge badge-success">🏢 <%= user.role %></span>
+                            <% } else if (user.role === 'Admin') { %>
+                                <span class="badge badge-danger">👨‍💼 <%= user.role %></span>
+                            <% } %>
+                        </td>
+                        <td><%= user.address || '---' %></td>
+                        <td><%= new Date(user.createdAt).toLocaleDateString('vi-VN') %></td>
+                        <td>
+                            <a href="/users/<%= user.id %>" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">Chi Tiết</a>
+                            <a href="/users/<%= user.id %>/edit" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">Sửa</a>
+                            <a href="/users/<%= user.id %>/delete" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="return confirm('Xác nhận xóa?');">Xóa</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <div class="empty-state">
+            <h3>Không có user nào</h3>
+            <p>Hãy tạo user mới để bắt đầu</p>
+        </div>
+    <% } %>
+</div>
+
+<!-- Pagination -->
+<% if (typeof pagination !== 'undefined' && pagination && pagination.totalPages > 1) { %>
+    <div class="pagination">
+        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+            <% if (i === pagination.page) { %>
+                <span class="active"><%= i %></span>
+            <% } else { %>
+                <a href="/users?page=<%= i %><%= filter?.role ? '&role=' + filter.role : '' %>"><%= i %></a>
+            <% } %>
+        <% } %>
+    </div>
+<% } %>

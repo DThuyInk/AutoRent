@@ -1,0 +1,67 @@
+[
+  {
+    "id": "B001",
+    "userId": "U001",
+    "carId": "C001",
+    "startDate": "2025-02-01",
+    "endDate": "2025-02-03",
+    "rentalDays": 3,
+    "pricePerDay": 700000,
+    "totalCost": 2100000,
+    "status": "confirmed",
+    "createdAt": "2025-01-20T10:00:00.000Z",
+    "updatedAt": "2025-01-20T10:00:00.000Z"
+  },
+  {
+    "id": "B002",
+    "userId": "U002",
+    "carId": "C002",
+    "startDate": "2025-02-05",
+    "endDate": "2025-02-07",
+    "rentalDays": 3,
+    "pricePerDay": 750000,
+    "totalCost": 2250000,
+    "status": "pending",
+    "createdAt": "2025-01-21T11:00:00.000Z",
+    "updatedAt": "2025-01-21T11:00:00.000Z"
+  },
+  {
+    "id": "B003",
+    "userId": "U001",
+    "carId": "C003",
+    "startDate": "2025-02-10",
+    "endDate": "2025-02-12",
+    "rentalDays": 3,
+    "pricePerDay": 1200000,
+    "totalCost": 3600000,
+    "status": "completed",
+    "createdAt": "2025-01-22T09:30:00.000Z",
+    "updatedAt": "2025-01-22T09:30:00.000Z"
+  },
+  {
+    "id": "B004",
+    "userId": "U002",
+    "carId": "C005",
+    "startDate": "2025-02-15",
+    "endDate": "2025-02-16",
+    "rentalDays": 2,
+    "pricePerDay": 600000,
+    "totalCost": 1200000,
+    "status": "cancelled",
+    "createdAt": "2025-01-23T14:00:00.000Z",
+    "updatedAt": "2025-01-23T14:00:00.000Z"
+  },
+  {
+    "id": "B005",
+    "userId": "U001",
+    "carId": "C001",
+    "startDate": "2025-03-01",
+    "endDate": "2025-03-04",
+    "rentalDays": 4,
+    "pricePerDay": 700000,
+    "totalCost": 2800000,
+    "status": "pending",
+    "createdAt": "2025-01-24T16:00:00.000Z",
+    "updatedAt": "2025-01-24T16:00:00.000Z"
+  }
+]

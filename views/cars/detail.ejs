@@ -1,0 +1,145 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <a href="/cars">Danh Sách Xe</a> / <strong>Chi Tiết Xe</strong>
+</div>
+
+<div style="max-width: 900px; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <!-- Left: Car Image/Color -->
+        <div>
+            <h2><%= car.brand %> <%= car.model %></h2>
+            <div style="background: linear-gradient(135deg, <%= car.color || '#999' %> 0%, <%= car.color || '#999' %> 100%); height: 300px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; margin-bottom: 20px;">
+                🚗
+            </div>
+        </div>
+
+        <!-- Right: Car Details -->
+        <div>
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Mã Xe:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><strong><%= car.id %></strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Biển Số:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><strong><%= car.licensePlate %></strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Hãng - Mẫu:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><%= car.brand %> <%= car.model %></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Năm Sản Xuất:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><%= car.year %></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Màu:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 40px; height: 40px; background-color: <%= car.color %>; border-radius: 5px; border: 1px solid #ddd;"></div>
+                                <%= car.color %>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Giá/Ngày:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">
+                            <strong style="color: #28a745; font-size: 18px;">
+                                <%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(car.pricePerDay) %>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Chủ Sở Hữu:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><%= car.ownerName || car.ownerId %></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea;">Trạng Thái:</td>
+                        <td style="padding: 10px;">
+                            <% if (car.status === 'available') { %>
+                                <span class="badge badge-success">✓ Có Sẵn</span>
+                            <% } else if (car.status === 'booked') { %>
+                                <span class="badge badge-warning">📝 Đã Đặt</span>
+                            <% } else if (car.status === 'maintenance') { %>
+                                <span class="badge badge-danger">🔧 Bảo Trì</span>
+                            <% } %>
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="margin-top: 20px;">
+                    <p style="color: #666; font-size: 12px; margin-bottom: 10px;">
+                        Tạo lúc: <%= new Date(car.createdAt).toLocaleString('vi-VN') %>
+                    </p>
+                    <p style="color: #666; font-size: 12px;">
+                        Cập nhật lúc: <%= new Date(car.updatedAt).toLocaleString('vi-VN') %>
+                    </p>
+                </div>
+
+                <div class="btn-group" style="margin-top: 20px;">
+                    <% if (user && (user.role === 'Owner' || user.role === 'Admin')) { %>
+                        <a href="/cars/<%= car.id %>/edit" class="btn btn-primary">✏️ Chỉnh Sửa</a>
+                    <% } %>
+                    <a href="/cars" class="btn btn-secondary">← Quay Lại</a>
+                    <% if (user && (user.role === 'Owner' || user.role === 'Admin')) { %>
+                        <a href="/cars/<%= car.id %>/delete" class="btn btn-danger" onclick="return confirm('Xác nhận xóa xe này?');">🗑️ Xóa</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Car Bookings -->
+    <div style="margin-top: 40px;">
+        <h3 style="color: #667eea; margin-bottom: 20px;">📋 Lịch Sử Booking Cho Xe Này</h3>
+        
+        <% if (bookings && bookings.length > 0) { %>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã Booking</th>
+                            <th>Khách Hàng</th>
+                            <th>Ngày Bắt Đầu</th>
+                            <th>Ngày Kết Thúc</th>
+                            <th>Số Ngày</th>
+                            <th>Tổng Tiền</th>
+                            <th>Trạng Thái</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% bookings.forEach(booking => { %>
+                            <tr>
+                                <td><strong><%= booking.id %></strong></td>
+                                <td><%= booking.customerName || booking.userId %></td>
+                                <td><%= booking.startDate %></td>
+                                <td><%= booking.endDate %></td>
+                                <td><%= booking.rentalDays %> ngày</td>
+                                <td><strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(booking.totalCost) %></strong></td>
+                                <td>
+                                    <% if (booking.status === 'pending') { %>
+                                        <span class="badge badge-info">⏳ Chờ Xác Nhận</span>
+                                    <% } else if (booking.status === 'confirmed') { %>
+                                        <span class="badge badge-success">✓ Đã Xác Nhận</span>
+                                    <% } else if (booking.status === 'completed') { %>
+                                        <span class="badge badge-primary">✓ Hoàn Thành</span>
+                                    <% } else if (booking.status === 'cancelled') { %>
+                                        <span class="badge badge-danger">✗ Hủy</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <a href="/bookings/<%= booking.id %>" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">Chi Tiết</a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info">
+                Chưa có booking nào cho xe này
+            </div>
+        <% } %>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <a href="/bookings">Danh Sách Booking</a> / <strong>Chỉnh Sửa Booking</strong>
+</div>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="alert alert-danger"><%= errorMessage %></div>
+<% } %>
+
+<div class="form-container">
+    <h2 style="color: #667eea; margin-bottom: 30px;">📝 Chỉnh Sửa Booking</h2>
+
+    <form method="POST" action="/bookings/<%= booking.id %>" onsubmit="return validateBookingForm();">
+        <div class="form-group">
+            <label for="userId">👤 User *</label>
+            <input type="text" id="userId" value="<%= booking.userId %>" disabled style="background-color: #f5f5f5;">
+            <small style="color: #999;">Không thể thay đổi User ID</small>
+        </div>
+
+        <div class="form-group">
+            <label for="carId">🚗 Xe *</label>
+            <input type="text" id="carId" value="<%= booking.carId %>" disabled style="background-color: #f5f5f5;">
+            <small style="color: #999;">Không thể thay đổi Xe</small>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="startDate">📅 Ngày Bắt Đầu *</label>
+                <input type="date" id="startDate" name="startDate" value="<%= booking.startDate %>" required disabled style="background-color: #f5f5f5;">
+                <small style="color: #999;">Không thể thay đổi</small>
+            </div>
+
+            <div class="form-group">
+                <label for="endDate">📅 Ngày Kết Thúc *</label>
+                <input type="date" id="endDate" name="endDate" value="<%= booking.endDate %>" required disabled style="background-color: #f5f5f5;">
+                <small style="color: #999;">Không thể thay đổi</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="status">📊 Trạng Thái *</label>
+            <select id="status" name="status" required>
+                <option value="pending" <%= booking.status === 'pending' ? 'selected' : '' %>>Chờ Xác Nhận</option>
+                <option value="confirmed" <%= booking.status === 'confirmed' ? 'selected' : '' %>>Đã Xác Nhận</option>
+                <option value="completed" <%= booking.status === 'completed' ? 'selected' : '' %>>Hoàn Thành</option>
+                <option value="cancelled" <%= booking.status === 'cancelled' ? 'selected' : '' %>>Hủy</option>
+            </select>
+        </div>
+
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="color: #667eea; margin-bottom: 15px;">💰 Thông Tin Chi Phí (Chỉ Xem)</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Giá/Ngày</label>
+                    <input type="number" value="<%= booking.pricePerDay %>" disabled style="background-color: white;">
+                </div>
+                <div class="form-group">
+                    <label>Số Ngày</label>
+                    <input type="number" value="<%= booking.rentalDays %>" disabled style="background-color: white;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Tổng Chi Phí</label>
+                <input type="number" value="<%= booking.totalCost %>" disabled style="background-color: white; font-size: 16px; font-weight: bold; color: #28a745;">
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-success">✓ Lưu Thay Đổi</button>
+            <a href="/bookings/<%= booking.id %>" class="btn btn-secondary">← Hủy</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function validateBookingForm() {
+    return confirm('Bạn chắc chắn muốn cập nhật trạng thái booking này?');
+}
+</script>

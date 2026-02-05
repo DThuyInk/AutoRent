@@ -1,0 +1,135 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <a href="/bookings">Danh Sách Booking</a> / <strong>Tạo Booking Mới</strong>
+</div>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="alert alert-danger"><%= errorMessage %></div>
+<% } %>
+
+<div class="form-container">
+    <h2 style="color: #667eea; margin-bottom: 30px;">📝 Tạo Booking Mới</h2>
+
+    <form method="POST" action="/bookings" onsubmit="return validateBookingForm();">
+        <div class="form-group">
+            <label for="userId">👤 Chọn User *</label>
+            <% if (user && user.role === 'User') { %>
+                <!-- User: show their own ID as disabled -->
+                <input type="text" id="userId" value="<%= user.name %> (<%= user.id %>)" disabled style="background-color: #f5f5f5;">
+                <input type="hidden" name="userId" value="<%= user.id %>">
+            <% } else { %>
+                <!-- Admin/Owner: show dropdown -->
+                <select id="userId" name="userId" required onchange="updateCarList();">
+                    <option value="">-- Chọn User --</option>
+                    <% if (typeof users !== 'undefined' && users) { %>
+                        <% users.forEach(u => { %>
+                            <option value="<%= u.id %>"><%= u.name %> (<%= u.id %>)</option>
+                        <% }); %>
+                    <% } %>
+                </select>
+            <% } %>
+        </div>
+
+        <div class="form-group">
+            <label for="carId">🚗 Chọn Xe *</label>
+            <select id="carId" name="carId" required onchange="updateCarPrice();">
+                <option value="">-- Chọn Xe --</option>
+                <% if (typeof cars !== 'undefined' && cars) { %>
+                    <% cars.forEach(car => { %>
+                        <option value="<%= car.id %>" data-price="<%= car.pricePerDay %>">
+                            <%= car.brand %> <%= car.model %> - <%= car.licensePlate %> (<%=  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(car.pricePerDay) %>/ngày)
+                        </option>
+                    <% }); %>
+                <% } %>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="startDate">📅 Ngày Bắt Đầu *</label>
+                <input type="date" id="startDate" name="startDate" required onchange="calculateRentalDays();">
+            </div>
+
+            <div class="form-group">
+                <label for="endDate">📅 Ngày Kết Thúc *</label>
+                <input type="date" id="endDate" name="endDate" required onchange="calculateRentalDays();">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="rentalDays">📊 Số Ngày Thuê</label>
+                <input type="number" id="rentalDays" name="rentalDays" readonly style="background-color: #f5f5f5;">
+            </div>
+
+            <div class="form-group">
+                <label for="pricePerDay">💰 Giá/Ngày</label>
+                <input type="number" id="pricePerDay" name="pricePerDay" readonly style="background-color: #f5f5f5;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="totalCost">💵 Tổng Chi Phí</label>
+            <input type="number" id="totalCost" name="totalCost" readonly style="background-color: #f5f5f5; font-size: 18px; font-weight: bold; color: #28a745;">
+        </div>
+
+        <div class="form-group">
+            <label for="notes">📝 Ghi Chú (Không bắt buộc)</label>
+            <textarea id="notes" name="notes" placeholder="Thêm ghi chú về booking..."></textarea>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-success">✓ Tạo Booking</button>
+            <a href="/bookings" class="btn btn-secondary">← Hủy</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function validateBookingForm() {
+    const startDate = new Date(document.getElementById('startDate').value);
+    const endDate = new Date(document.getElementById('endDate').value);
+    
+    if (endDate <= startDate) {
+        alert('⚠️ Ngày kết thúc phải sau ngày bắt đầu!');
+        return false;
+    }
+    
+    if (!document.getElementById('userId').value) {
+        alert('⚠️ Vui lòng chọn User!');
+        return false;
+    }
+    
+    if (!document.getElementById('carId').value) {
+        alert('⚠️ Vui lòng chọn Xe!');
+        return false;
+    }
+    
+    return true;
+}
+
+function updateCarPrice() {
+    const carSelect = document.getElementById('carId');
+    const selectedOption = carSelect.options[carSelect.selectedIndex];
+    const price = selectedOption.getAttribute('data-price') || 0;
+    document.getElementById('pricePerDay').value = price;
+    calculateRentalDays();
+}
+
+function calculateRentalDays() {
+    const startDateInput = document.getElementById('startDate').value;
+    const endDateInput = document.getElementById('endDate').value;
+    
+    if (startDateInput && endDateInput) {
+        const startDate = new Date(startDateInput);
+        const endDate = new Date(endDateInput);
+        const diffTime = endDate - startDate;
+        const rentalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        const pricePerDay = parseFloat(document.getElementById('pricePerDay').value) || 0;
+        const totalCost = rentalDays * pricePerDay;
+        
+        document.getElementById('rentalDays').value = rentalDays > 0 ? rentalDays : 0;
+        document.getElementById('totalCost').value = totalCost > 0 ? totalCost : 0;
+    }
+}
+</script>

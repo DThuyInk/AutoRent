@@ -1,0 +1,120 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <strong>Danh Sách Xe</strong>
+</div>
+
+<% if (typeof successMessage !== 'undefined' && successMessage) { %>
+    <div class="alert alert-success"><%= successMessage %></div>
+<% } %>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="alert alert-danger"><%= errorMessage %></div>
+<% } %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="color: #667eea;">Danh Sách Xe</h2>
+    <% if (user && (user.role === 'Owner' || user.role === 'Admin')) { %>
+        <a href="/cars/create" class="btn btn-primary">+ Thêm Xe Mới</a>
+    <% } %>
+</div>
+
+<!-- Filter & Search -->
+<div style="background-color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <form method="GET" action="/cars" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; align-items: end;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>Lọc theo Trạng Thái:</label>
+            <select name="status" onchange="this.form.submit();">
+                <option value="">-- Tất cả --</option>
+                <option value="available" <%= filter?.status === 'available' ? 'selected' : '' %>>Có Sẵn</option>
+                <option value="booked" <%= filter?.status === 'booked' ? 'selected' : '' %>>Đã Đặt</option>
+                <option value="maintenance" <%= filter?.status === 'maintenance' ? 'selected' : '' %>>Bảo Trì</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <input type="text" name="search" placeholder="Tìm kiếm biển số, hãng xe..." value="<%= searchQuery || '' %>" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">🔍 Tìm Kiếm</button>
+        </div>
+    </form>
+</div>
+
+<!-- Cars Table -->
+<div class="table-container">
+    <% if (cars && cars.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã Xe</th>
+                    <th>Biển Số</th>
+                    <th>Hãng - Mẫu</th>
+                    <th>Năm</th>
+                    <th>Màu</th>
+                    <th>Giá/Ngày</th>
+                    <th>Chủ Sở Hữu</th>
+                    <th>Trạng Thái</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% cars.forEach(car => { %>
+                    <tr>
+                        <td><strong><%= car.id %></strong></td>
+                        <td><%= car.licensePlate %></td>
+                        <td><%= car.brand %> <%= car.model %></td>
+                        <td><%= car.year %></td>
+                        <td>
+                            <div style="width: 30px; height: 30px; background-color: <%= car.color ? car.color : 'rgba(153, 153, 153, 1)' %>; border-radius: 5px; border: 1px solid #ddd;"></div>
+                        </td>
+                        <td><strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(car.pricePerDay) %></strong></td>
+                        <td><%= car.ownerName || car.ownerId %></td>
+                        <td>
+                            <% if (car.status === 'available') { %>
+                                <span class="badge badge-success">✓ Có Sẵn</span>
+                            <% } else if (car.status === 'booked') { %>
+                                <span class="badge badge-warning">📝 Đã Đặt</span>
+                            <% } else if (car.status === 'maintenance') { %>
+                                <span class="badge badge-danger">🔧 Bảo Trì</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <a href="/cars/<%= car.id %>" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">Chi Tiết</a>
+                            <% if (user && (user.role === 'Owner' || user.role === 'Admin')) { %>
+                                <a href="/cars/<%= car.id %>/edit" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">Sửa</a>
+                                <a href="/cars/<%= car.id %>/delete" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="return confirm('Xác nhận xóa?');">Xóa</a>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <div class="empty-state">
+            <h3>Không có xe nào</h3>
+            <p>Hãy thêm xe mới để bắt đầu</p>
+        </div>
+    <% } %>
+</div>
+
+<!-- Pagination -->
+<% if (typeof pagination !== 'undefined' && pagination && pagination.totalPages > 1) { %>
+    <div class="pagination">
+        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+            <% if (i === pagination.page) { %>
+                <span class="active"><%= i %></span>
+            <% } else { %>
+                <a href="/cars?page=<%= i %><%= filter?.status ? '&status=' + filter.status : '' %>"><%= i %></a>
+            <% } %>
+        <% } %>
+    </div>
+<% } %>
+
+<style>
+    input[type="text"], select {
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+</style>

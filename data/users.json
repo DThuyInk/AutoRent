@@ -1,0 +1,62 @@
+[
+  {
+    "id": "U001",
+    "username": "nguyenvana",
+    "password": "password123",
+    "name": "Nguyen Van A",
+    "email": "a.nguyen@gmail.com",
+    "phone": "0901000001",
+    "address": "Hà Nội",
+    "role": "User",
+    "createdAt": "2025-01-10T08:00:00.000Z",
+    "updatedAt": "2025-01-10T08:00:00.000Z"
+  },
+  {
+    "id": "U002",
+    "username": "tranthib",
+    "password": "password123",
+    "name": "Tran Thi B",
+    "email": "b.tran@gmail.com",
+    "phone": "0901000002",
+    "address": "TP HCM",
+    "role": "User",
+    "createdAt": "2025-01-10T08:05:00.000Z",
+    "updatedAt": "2025-01-10T08:05:00.000Z"
+  },
+  {
+    "id": "U003",
+    "username": "levanowner1",
+    "password": "owner123",
+    "name": "Le Van Owner 1",
+    "email": "owner1@gmail.com",
+    "phone": "0902000001",
+    "address": "Đà Nẵng",
+    "role": "Owner",
+    "createdAt": "2025-01-09T09:00:00.000Z",
+    "updatedAt": "2025-01-09T09:00:00.000Z"
+  },
+  {
+    "id": "U004",
+    "username": "phamowner2",
+    "password": "owner123",
+    "name": "Pham Owner 2",
+    "email": "owner2@gmail.com",
+    "phone": "0902000002",
+    "address": "Nha Trang",
+    "role": "Owner",
+    "createdAt": "2025-01-09T09:10:00.000Z",
+    "updatedAt": "2025-01-09T09:10:00.000Z"
+  },
+  {
+    "id": "U005",
+    "username": "admin",
+    "password": "admin123",
+    "name": "System Admin",
+    "email": "admin@gmail.com",
+    "phone": "0903000001",
+    "address": "Hà Nội",
+    "role": "Admin",
+    "createdAt": "2025-01-08T10:00:00.000Z",
+    "updatedAt": "2025-01-08T10:00:00.000Z"
+  }
+]

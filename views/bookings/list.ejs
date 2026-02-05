@@ -1,0 +1,123 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <strong>Danh Sách Booking</strong>
+</div>
+
+<% if (typeof successMessage !== 'undefined' && successMessage) { %>
+    <div class="alert alert-success"><%= successMessage %></div>
+<% } %>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="alert alert-danger"><%= errorMessage %></div>
+<% } %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="color: #667eea;">Danh Sách Booking</h2>
+    <% if (user && user.role !== 'Owner') { %>
+        <a href="/bookings/create" class="btn btn-primary">+ Tạo Booking Mới</a>
+    <% } else if (user && user.role === 'Owner') { %>
+        <button class="btn btn-primary" disabled style="opacity: 0.6; cursor: not-allowed;">+ Tạo Booking Mới</button>
+    <% } %>
+</div>
+
+<!-- Filter -->
+<div style="background-color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <form method="GET" action="/bookings" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>Lọc theo Trạng Thái:</label>
+            <select name="status" onchange="this.form.submit();">
+                <option value="">-- Tất cả --</option>
+                <option value="pending" <%= filter?.status === 'pending' ? 'selected' : '' %>>Chờ Xác Nhận</option>
+                <option value="confirmed" <%= filter?.status === 'confirmed' ? 'selected' : '' %>>Đã Xác Nhận</option>
+                <option value="completed" <%= filter?.status === 'completed' ? 'selected' : '' %>>Hoàn Thành</option>
+                <option value="cancelled" <%= filter?.status === 'cancelled' ? 'selected' : '' %>>Hủy</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <input type="text" name="userId" placeholder="Tìm theo User ID..." value="<%= filter?.userId || '' %>" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <input type="text" name="carId" placeholder="Tìm theo Car ID..." value="<%= filter?.carId || '' %>" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">🔍 Tìm Kiếm</button>
+        </div>
+    </form>
+</div>
+
+<!-- Bookings Table -->
+<div class="table-container">
+    <% if (bookings && bookings.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã Booking</th>
+                    <th>User</th>
+                    <th>Xe</th>
+                    <th>Ngày Bắt Đầu</th>
+                    <th>Ngày Kết Thúc</th>
+                    <th>Số Ngày</th>
+                    <th>Tổng Tiền</th>
+                    <th>Trạng Thái</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% bookings.forEach(booking => { %>
+                    <tr>
+                        <td><strong><%= booking.id %></strong></td>
+                        <td>
+                            <a href="/users/<%= booking.userId %>" style="color: #667eea; text-decoration: none;">
+                                <%= booking.userName || booking.userId %>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/cars/<%= booking.carId %>" style="color: #667eea; text-decoration: none;">
+                                <%= booking.carLicense || booking.carId %>
+                            </a>
+                        </td>
+                        <td><%= booking.startDate %></td>
+                        <td><%= booking.endDate %></td>
+                        <td><%= booking.rentalDays %> ngày</td>
+                        <td><strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(booking.totalCost) %></strong></td>
+                        <td>
+                            <% if (booking.status === 'pending') { %>
+                                <span class="badge badge-info">⏳ Chờ Xác Nhận</span>
+                            <% } else if (booking.status === 'confirmed') { %>
+                                <span class="badge badge-success">✓ Đã Xác Nhận</span>
+                            <% } else if (booking.status === 'completed') { %>
+                                <span class="badge badge-primary">✓ Hoàn Thành</span>
+                            <% } else if (booking.status === 'cancelled') { %>
+                                <span class="badge badge-danger">✗ Hủy</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <a href="/bookings/<%= booking.id %>" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">Chi Tiết</a>
+                            <a href="/bookings/<%= booking.id %>/edit" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">Sửa</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <div class="empty-state">
+            <h3>Không có booking nào</h3>
+            <p>Hãy tạo booking mới để bắt đầu</p>
+        </div>
+    <% } %>
+</div>
+
+<!-- Pagination -->
+<% if (typeof pagination !== 'undefined' && pagination && pagination.totalPages > 1) { %>
+    <div class="pagination">
+        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+            <% if (i === pagination.page) { %>
+                <span class="active"><%= i %></span>
+            <% } else { %>
+                <a href="/bookings?page=<%= i %><%= filter?.status ? '&status=' + filter.status : '' %>"><%= i %></a>
+            <% } %>
+        <% } %>
+    </div>
+<% } %>

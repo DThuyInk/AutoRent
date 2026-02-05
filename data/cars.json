@@ -1,0 +1,67 @@
+[
+  {
+    "id": "C001",
+    "licensePlate": "30A-12345",
+    "brand": "Toyota",
+    "model": "Vios",
+    "year": 2022,
+    "color": "White",
+    "pricePerDay": 700000,
+    "ownerId": "U003",
+    "status": "available",
+    "createdAt": "2025-01-11T07:00:00.000Z",
+    "updatedAt": "2025-01-11T07:00:00.000Z"
+  },
+  {
+    "id": "C002",
+    "licensePlate": "43A-67890",
+    "brand": "Honda",
+    "model": "City",
+    "year": 2021,
+    "color": "Black",
+    "pricePerDay": 750000,
+    "ownerId": "U003",
+    "status": "booked",
+    "createdAt": "2025-01-11T07:10:00.000Z",
+    "updatedAt": "2025-01-11T07:10:00.000Z"
+  },
+  {
+    "id": "C003",
+    "licensePlate": "51G-99999",
+    "brand": "Mazda",
+    "model": "CX-5",
+    "year": 2023,
+    "color": "Red",
+    "pricePerDay": 1200000,
+    "ownerId": "U004",
+    "status": "available",
+    "createdAt": "2025-01-12T08:00:00.000Z",
+    "updatedAt": "2025-01-12T08:00:00.000Z"
+  },
+  {
+    "id": "C004",
+    "licensePlate": "79A-55555",
+    "brand": "Kia",
+    "model": "Seltos",
+    "year": 2022,
+    "color": "Blue",
+    "pricePerDay": 950000,
+    "ownerId": "U004",
+    "status": "maintenance",
+    "createdAt": "2025-01-12T08:15:00.000Z",
+    "updatedAt": "2025-01-12T08:15:00.000Z"
+  },
+  {
+    "id": "C005",
+    "licensePlate": "29B-88888",
+    "brand": "Hyundai",
+    "model": "Accent",
+    "year": 2020,
+    "color": "Silver",
+    "pricePerDay": 600000,
+    "ownerId": "U004",
+    "status": "available",
+    "createdAt": "2025-01-13T09:00:00.000Z",
+    "updatedAt": "2025-01-13T09:00:00.000Z"
+  }
+]

@@ -1,0 +1,143 @@
+<div class="breadcrumb">
+    <strong>Dashboard</strong>
+</div>
+
+<h2 style="color: #667eea; margin-bottom: 30px;">📊 Dashboard Quản Lý</h2>
+
+<!-- Stats Cards -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <!-- Total Cars -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div style="font-size: 32px; margin-bottom: 10px;">🚗</div>
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;"><%= stats?.totalCars || 0 %></div>
+        <div style="font-size: 14px; opacity: 0.9;">Tổng Cộng Xe</div>
+    </div>
+
+    <!-- Available Cars -->
+    <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div style="font-size: 32px; margin-bottom: 10px;">✓</div>
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;"><%= stats?.availableCars || 0 %></div>
+        <div style="font-size: 14px; opacity: 0.9;">Xe Có Sẵn</div>
+    </div>
+
+    <!-- Total Bookings -->
+    <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div style="font-size: 32px; margin-bottom: 10px;">📝</div>
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;"><%= stats?.totalBookings || 0 %></div>
+        <div style="font-size: 14px; opacity: 0.9;">Tổng Booking</div>
+    </div>
+
+    <!-- Total Users -->
+    <div style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div style="font-size: 32px; margin-bottom: 10px;">👥</div>
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;"><%= stats?.totalUsers || 0 %></div>
+        <div style="font-size: 14px; opacity: 0.9;">Tổng User</div>
+    </div>
+</div>
+
+<!-- Recent Bookings & Stats Row -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px;">
+    <!-- Recent Bookings -->
+    <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h3 style="color: #667eea; margin-bottom: 20px;">📋 Booking Gần Đây</h3>
+        <% if (recentBookings && recentBookings.length > 0) { %>
+            <div class="table-container" style="box-shadow: none;">
+                <table style="font-size: 14px;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 10px;">ID</th>
+                            <th style="padding: 10px;">User</th>
+                            <th style="padding: 10px;">Xe</th>
+                            <th style="padding: 10px;">Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% recentBookings.forEach(booking => { %>
+                            <tr>
+                                <td style="padding: 10px;"><a href="/bookings/<%= booking.id %>" style="color: #667eea;"><strong><%= booking.id %></strong></a></td>
+                                <td style="padding: 10px;"><%= booking.userId %></td>
+                                <td style="padding: 10px;"><%= booking.carId %></td>
+                                <td style="padding: 10px;">
+                                    <% if (booking.status === 'pending') { %>
+                                        <span class="badge badge-info">⏳ Chờ</span>
+                                    <% } else if (booking.status === 'confirmed') { %>
+                                        <span class="badge badge-success">✓ OK</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <p style="color: #999;">Chưa có booking nào</p>
+        <% } %>
+        <div style="margin-top: 15px;">
+            <a href="/bookings" class="btn btn-primary" style="width: 100%; text-align: center;">Xem Tất Cả Booking →</a>
+        </div>
+    </div>
+
+    <!-- Status Stats -->
+    <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h3 style="color: #667eea; margin-bottom: 20px;">📊 Thống Kê</h3>
+        <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>Booking Chờ Xác Nhận</span>
+                <strong style="color: #ff6b6b;"><%= stats?.pendingBookings || 0 %></strong>
+            </div>
+            <div style="background-color: #f5f5f5; height: 10px; border-radius: 5px; overflow: hidden;">
+                <div style="background-color: #ff6b6b; height: 100%; width: <%= stats?.pendingBookings ? Math.min(stats.pendingBookings * 10, 100) : 0 %>%;"></div>
+            </div>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>Booking Đã Xác Nhận</span>
+                <strong style="color: #28a745;"><%= stats?.confirmedBookings || 0 %></strong>
+            </div>
+            <div style="background-color: #f5f5f5; height: 10px; border-radius: 5px; overflow: hidden;">
+                <div style="background-color: #28a745; height: 100%; width: <%= stats?.confirmedBookings ? Math.min(stats.confirmedBookings * 10, 100) : 0 %>%;"></div>
+            </div>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>Xe Bảo Trì</span>
+                <strong style="color: #e74c3c;"><%= stats?.maintenanceCars || 0 %></strong>
+            </div>
+            <div style="background-color: #f5f5f5; height: 10px; border-radius: 5px; overflow: hidden;">
+                <div style="background-color: #e74c3c; height: 100%; width: <%= stats?.maintenanceCars ? Math.min(stats.maintenanceCars * 10, 100) : 0 %>%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <h3 style="color: #667eea; margin-bottom: 20px;">⚡ Hành Động Nhanh</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+        <a href="/cars/create" class="btn btn-primary" style="text-align: center;">🚗 Thêm Xe</a>
+        <a href="/bookings/create" class="btn btn-success" style="text-align: center;">📝 Tạo Booking</a>
+        <a href="/users/create" class="btn btn-secondary" style="text-align: center;">👤 Thêm User</a>
+        <a href="/cars" class="btn btn-info" style="text-align: center; background-color: #17a2b8; color: white;">🚙 Quản Lý Xe</a>
+        <a href="/bookings" class="btn btn-info" style="text-align: center; background-color: #17a2b8; color: white;">📋 Quản Lý Booking</a>
+        <a href="/users" class="btn btn-info" style="text-align: center; background-color: #17a2b8; color: white;">👥 Quản Lý User</a>
+    </div>
+</div>
+
+<style>
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+}
+</style>

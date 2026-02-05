@@ -1,0 +1,116 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <a href="/cars">Danh Sách Xe</a> / <strong>Thêm Xe Mới</strong>
+</div>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="alert alert-danger"><%= errorMessage %></div>
+<% } %>
+
+<div class="form-container">
+    <h2 style="color: #667eea; margin-bottom: 30px;">🚗 Thêm Xe Mới</h2>
+
+    <form method="POST" action="/cars" onsubmit="return validateCarForm();">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="brand">Hãng Xe *</label>
+                <input type="text" id="brand" name="brand" placeholder="VD: Toyota, BMW, Mercedes..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="model">Mẫu Xe *</label>
+                <input type="text" id="model" name="model" placeholder="VD: Camry, 3 Series..." required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="licensePlate">Biển Số Xe *</label>
+                <input type="text" id="licensePlate" name="licensePlate" placeholder="VD: 29-ABC-123" required>
+            </div>
+
+            <div class="form-group">
+                <label for="year">Năm Sản Xuất *</label>
+                <input type="number" id="year" name="year" min="1990" max="2030" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="color">Màu Sắc *</label>
+                <input type="color" id="color" name="color" value="#000000" required style="height: 50px;">
+            </div>
+
+            <div class="form-group">
+                <label for="pricePerDay">Giá Thuê/Ngày (VND) *</label>
+                <input type="number" id="pricePerDay" name="pricePerDay" min="0" step="1000" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="ownerId">Chủ Sở Hữu (Owner) *</label>
+            <% if (user && user.role === 'Owner') { %>
+                <!-- Owner: show their own name as disabled -->
+                <input type="text" id="ownerId" value="<%= user.name %> (<%= user.id %>)" disabled style="background-color: #f5f5f5;">
+                <input type="hidden" name="ownerId" value="<%= user.id %>">
+            <% } else { %>
+                <!-- Admin: show dropdown -->
+                <select id="ownerId" name="ownerId" required>
+                    <option value="">-- Chọn Owner --</option>
+                    <% if (typeof owners !== 'undefined' && owners) { %>
+                        <% owners.forEach(owner => { %>
+                            <option value="<%= owner.id %>"><%= owner.name %> (<%= owner.id %>)</option>
+                        <% }); %>
+                    <% } %>
+                </select>
+            <% } %>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-success">✓ Thêm Xe</button>
+            <a href="/cars" class="btn btn-secondary">← Hủy</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function validateCarForm() {
+    const brand = document.getElementById('brand').value.trim();
+    const model = document.getElementById('model').value.trim();
+    const licensePlate = document.getElementById('licensePlate').value.trim();
+    const year = document.getElementById('year').value;
+    const pricePerDay = document.getElementById('pricePerDay').value;
+    const ownerId = document.getElementById('ownerId').value;
+
+    if (!brand) {
+        alert('⚠️ Hãng xe không được rỗng!');
+        return false;
+    }
+
+    if (!model) {
+        alert('⚠️ Mẫu xe không được rỗng!');
+        return false;
+    }
+
+    if (!licensePlate) {
+        alert('⚠️ Biển số xe không được rỗng!');
+        return false;
+    }
+
+    if (!year || year < 1990 || year > 2030) {
+        alert('⚠️ Năm sản xuất không hợp lệ!');
+        return false;
+    }
+
+    if (!pricePerDay || pricePerDay <= 0) {
+        alert('⚠️ Giá thuê phải lớn hơn 0!');
+        return false;
+    }
+
+    if (!ownerId) {
+        alert('⚠️ Vui lòng chọn chủ sở hữu!');
+        return false;
+    }
+
+    return confirm('Bạn chắc chắn muốn thêm xe này?');
+}
+</script>

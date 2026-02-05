@@ -1,0 +1,215 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <a href="/users">Danh Sách User</a> / <strong>Hồ Sơ User</strong>
+</div>
+
+<% if (typeof successMessage !== 'undefined' && successMessage) { %>
+    <div class="alert alert-success"><%= successMessage %></div>
+<% } %>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="alert alert-danger"><%= errorMessage %></div>
+<% } %>
+
+<div style="max-width: 900px;">
+    <!-- User Profile Card -->
+    <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px;">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+            <!-- Left: Avatar -->
+            <div style="text-align: center;">
+                <div style="width: 150px; height: 150px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 60px; margin: 0 auto 20px;">
+                    👤
+                </div>
+                <h2><%= user.name %></h2>
+                <p style="color: #666; margin-bottom: 15px;">
+                    <% if (user.role === 'User') { %>
+                        <span class="badge badge-info">👤 Khách Hàng</span>
+                    <% } else if (user.role === 'Owner') { %>
+                        <span class="badge badge-success">🏢 Chủ Xe</span>
+                    <% } else if (user.role === 'Admin') { %>
+                        <span class="badge badge-danger">👨‍💼 Quản Trị Viên</span>
+                    <% } %>
+                </p>
+            </div>
+
+            <!-- Right: User Details -->
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
+                <h3 style="color: #667eea; margin-bottom: 20px;">📋 Thông Tin Chi Tiết</h3>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6; width: 150px;">User ID:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><strong><%= user.id %></strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Tên Đăng Nhập:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><%= user.username %></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Email:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><a href="mailto:<%= user.email %>" style="color: #667eea;"><%= user.email %></a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Điện Thoại:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><a href="tel:<%= user.phone %>" style="color: #667eea;"><%= user.phone %></a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Địa Chỉ:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><%= user.address || '(Chưa cập nhật)' %></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Vai Trò:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">
+                            <% if (user.role === 'User') { %>
+                                <span class="badge badge-info">Khách Hàng Thường</span>
+                            <% } else if (user.role === 'Owner') { %>
+                                <span class="badge badge-success">Chủ Sở Hữu Xe</span>
+                            <% } else if (user.role === 'Admin') { %>
+                                <span class="badge badge-danger">Quản Trị Viên Hệ Thống</span>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea; border-bottom: 1px solid #dee2e6;">Ngày Tạo:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #dee2e6;"><%= new Date(user.createdAt).toLocaleString('vi-VN') %></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600; color: #667eea;">Cập Nhật Lúc:</td>
+                        <td style="padding: 10px;"><%= new Date(user.updatedAt).toLocaleString('vi-VN') %></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="btn-group" style="margin-top: 30px;">
+            <a href="/users/<%= user.id %>/edit" class="btn btn-primary">✏️ Chỉnh Sửa</a>
+            <a href="/users" class="btn btn-secondary">← Quay Lại</a>
+            <a href="/users/<%= user.id %>/delete" class="btn btn-danger" onclick="return confirm('Xác nhận xóa user này?');">🗑️ Xóa</a>
+        </div>
+    </div>
+
+    <!-- User Bookings Section -->
+    <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h3 style="color: #667eea; margin-bottom: 20px;">📝 Lịch Sử Booking</h3>
+
+        <% if (bookings && bookings.length > 0) { %>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã Booking</th>
+                            <th>Xe</th>
+                            <th>Ngày Bắt Đầu</th>
+                            <th>Ngày Kết Thúc</th>
+                            <th>Số Ngày</th>
+                            <th>Tổng Tiền</th>
+                            <th>Trạng Thái</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% bookings.forEach(booking => { %>
+                            <tr>
+                                <td><strong><%= booking.id %></strong></td>
+                                <td>
+                                    <% if (booking.car) { %>
+                                        <a href="/cars/<%= booking.carId %>" style="color: #667eea; text-decoration: none;">
+                                            <%= booking.car.brand %> <%= booking.car.model %> (<%= booking.car.licensePlate %>)
+                                        </a>
+                                    <% } else { %>
+                                        <%= booking.carId %>
+                                    <% } %>
+                                </td>
+                                <td><%= booking.startDate %></td>
+                                <td><%= booking.endDate %></td>
+                                <td><%= booking.rentalDays %> ngày</td>
+                                <td><strong><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(booking.totalCost) %></strong></td>
+                                <td>
+                                    <% if (booking.status === 'pending') { %>
+                                        <span class="badge badge-info">⏳ Chờ Xác Nhận</span>
+                                    <% } else if (booking.status === 'confirmed') { %>
+                                        <span class="badge badge-success">✓ Đã Xác Nhận</span>
+                                    <% } else if (booking.status === 'completed') { %>
+                                        <span class="badge badge-primary">✓ Hoàn Thành</span>
+                                    <% } else if (booking.status === 'cancelled') { %>
+                                        <span class="badge badge-danger">✗ Hủy</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <a href="/bookings/<%= booking.id %>" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">Chi Tiết</a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info">
+                👤 User này chưa có booking nào
+            </div>
+        <% } %>
+
+        <!-- Booking Pagination -->
+        <% if (typeof bookingPagination !== 'undefined' && bookingPagination && bookingPagination.totalPages > 1) { %>
+            <div class="pagination">
+                <% for (let i = 1; i <= bookingPagination.totalPages; i++) { %>
+                    <% if (i === bookingPagination.page) { %>
+                        <span class="active"><%= i %></span>
+                    <% } else { %>
+                        <a href="/users/<%= user.id %>?bookingPage=<%= i %>"><%= i %></a>
+                    <% } %>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Owner's Cars Section (if Owner) -->
+    <% if (user.role === 'Owner' && cars) { %>
+        <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 30px;">
+            <h3 style="color: #667eea; margin-bottom: 20px;">🚗 Danh Sách Xe Của Owner</h3>
+
+            <% if (cars && cars.length > 0) { %>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mã Xe</th>
+                                <th>Hãng - Mẫu</th>
+                                <th>Biển Số</th>
+                                <th>Năm</th>
+                                <th>Giá/Ngày</th>
+                                <th>Trạng Thái</th>
+                                <th>Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% cars.forEach(car => { %>
+                                <tr>
+                                    <td><strong><%= car.id %></strong></td>
+                                    <td><%= car.brand %> <%= car.model %></td>
+                                    <td><%= car.licensePlate %></td>
+                                    <td><%= car.year %></td>
+                                    <td><%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(car.pricePerDay) %></td>
+                                    <td>
+                                        <% if (car.status === 'available') { %>
+                                            <span class="badge badge-success">✓ Có Sẵn</span>
+                                        <% } else if (car.status === 'booked') { %>
+                                            <span class="badge badge-warning">📝 Đã Đặt</span>
+                                        <% } else if (car.status === 'maintenance') { %>
+                                            <span class="badge badge-danger">🔧 Bảo Trì</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <a href="/cars/<%= car.id %>" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">Chi Tiết</a>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info">
+                    🚗 Owner này chưa có xe nào
+                </div>
+            <% } %>
+        </div>
+    <% } %>
+</div>

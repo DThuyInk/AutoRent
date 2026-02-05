@@ -1,0 +1,129 @@
+<div class="breadcrumb">
+    <a href="/dashboard">Dashboard</a> / <a href="/cars">Danh Sách Xe</a> / <strong>Chỉnh Sửa Xe</strong>
+</div>
+
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <div class="alert alert-danger"><%= errorMessage %></div>
+<% } %>
+
+<div class="form-container">
+    <h2 style="color: #667eea; margin-bottom: 30px;">✏️ Chỉnh Sửa Xe</h2>
+
+    <form method="POST" action="/cars/<%= car.id %>" onsubmit="return validateCarForm();">
+        <div class="form-group">
+            <label for="id">Mã Xe</label>
+            <input type="text" id="id" value="<%= car.id %>" disabled style="background-color: #f5f5f5;">
+            <small style="color: #999;">Không thể thay đổi</small>
+        </div>
+
+        <div class="form-group">
+            <label for="licensePlate">Biển Số Xe</label>
+            <input type="text" id="licensePlate" value="<%= car.licensePlate %>" disabled style="background-color: #f5f5f5;">
+            <small style="color: #999;">Không thể thay đổi</small>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="brand">Hãng Xe *</label>
+                <input type="text" id="brand" name="brand" value="<%= car.brand %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="model">Mẫu Xe *</label>
+                <input type="text" id="model" name="model" value="<%= car.model %>" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="year">Năm Sản Xuất *</label>
+                <input type="number" id="year" name="year" value="<%= car.year %>" min="1990" max="2030" required>
+            </div>
+
+            <div class="form-group">
+                <label for="color">Màu Sắc *</label>
+                <input type="color" id="color" name="color" value="<%= car.color %>" required style="height: 50px;">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="pricePerDay">Giá Thuê/Ngày (VND) *</label>
+                <input type="number" id="pricePerDay" name="pricePerDay" value="<%= car.pricePerDay %>" min="0" step="1000" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ownerId">Chủ Sở Hữu (Owner) *</label>
+                <select id="ownerId" name="ownerId" required>
+                    <option value="<%= car.ownerId %>" selected><%= car.ownerId %></option>
+                    <% if (typeof owners !== 'undefined' && owners) { %>
+                        <% owners.forEach(owner => { %>
+                            <% if (owner.id !== car.ownerId) { %>
+                                <option value="<%= owner.id %>"><%= owner.name %> (<%= owner.id %>)</option>
+                            <% } %>
+                        <% }); %>
+                    <% } %>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Trạng Thái *</label>
+            <select id="status" name="status" required>
+                <option value="available" <%= car.status === 'available' ? 'selected' : '' %>>Có Sẵn</option>
+                <option value="booked" <%= car.status === 'booked' ? 'selected' : '' %>>Đã Đặt</option>
+                <option value="maintenance" <%= car.status === 'maintenance' ? 'selected' : '' %>>Bảo Trì</option>
+            </select>
+        </div>
+
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="color: #667eea; margin-bottom: 15px;">ℹ️ Thông Tin Hệ Thống</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ngày Tạo</label>
+                    <input type="text" value="<%= new Date(car.createdAt).toLocaleString('vi-VN') %>" disabled style="background-color: white;">
+                </div>
+                <div class="form-group">
+                    <label>Cập Nhật Lúc</label>
+                    <input type="text" value="<%= new Date(car.updatedAt).toLocaleString('vi-VN') %>" disabled style="background-color: white;">
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-success">✓ Lưu Thay Đổi</button>
+            <a href="/cars/<%= car.id %>" class="btn btn-secondary">← Hủy</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function validateCarForm() {
+    const brand = document.getElementById('brand').value.trim();
+    const model = document.getElementById('model').value.trim();
+    const year = document.getElementById('year').value;
+    const pricePerDay = document.getElementById('pricePerDay').value;
+
+    if (!brand) {
+        alert('⚠️ Hãng xe không được rỗng!');
+        return false;
+    }
+
+    if (!model) {
+        alert('⚠️ Mẫu xe không được rỗng!');
+        return false;
+    }
+
+    if (!year || year < 1990 || year > 2030) {
+        alert('⚠️ Năm sản xuất không hợp lệ!');
+        return false;
+    }
+
+    if (!pricePerDay || pricePerDay <= 0) {
+        alert('⚠️ Giá thuê phải lớn hơn 0!');
+        return false;
+    }
+
+    return confirm('Bạn chắc chắn muốn cập nhật thông tin xe này?');
+}
+</script>
